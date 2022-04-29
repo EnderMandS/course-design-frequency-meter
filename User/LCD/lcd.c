@@ -6,12 +6,12 @@
 #include "cmsis_os2.h"
 #include "main.h"
 #include "font.h"
+#include "string.h"
+#include "fre.h"
 
 _lcd_dev lcddev;
 uint32_t POINT_COLOR=0xFFFFFFFF;
 uint32_t BACK_COLOR =0x00000000;
-float frequency=1000.f;
-char freArr[15]={"168,000,000Mhz"};
 
 //Ð´¼Ä´æÆ÷º¯Êý
 void LCD_WR_REG(__IO uint16_t regval){
@@ -1724,8 +1724,19 @@ void LCD_ShowString(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uin
 void lcdDisplay(void *argument){
   LCD_Init();
   for(;;){
-    LCD_ShowString(0,0,180,24,24,(uint8_t*)"Frequency meter");
-    LCD_ShowString(0,50,240,24,24,(uint8_t*)freArr);
+    char string[]="Frequency meter";
+    LCD_ShowString(0,0,strlen(string)*16,24,24,(uint8_t*)string);
+    freDouble2String(&fre);
+    LCD_ShowString(0,50,strlen((const char*)fre.freArr)*16,24,24,fre.freArr);
+    LCD_ShowString(0,80,strlen((const char*)fre.freArrThousand)*16,24,24,fre.freArrThousand);
+    LCD_ShowString(0,110,strlen((const char*)fre.freArrMillion)*16,24,24,fre.freArrMillion);
+    if(fre.frequency>1e6){
+      LCD_ShowString(0,200,strlen((const char*)fre.freArrMillion)*16,24,24,fre.freArrMillion);
+    }else if(fre.frequency>1e3){
+      LCD_ShowString(0,200,strlen((const char*)fre.freArrThousand)*16,24,24,fre.freArrThousand);
+    } else{
+      LCD_ShowString(0,200,strlen((const char*)fre.freArr)*16,24,24,fre.freArr);
+    }
     osDelay(1000);
   }
 }

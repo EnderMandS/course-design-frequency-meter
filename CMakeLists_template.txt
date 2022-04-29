@@ -50,6 +50,7 @@ endif ()
 
 include_directories(${includes}
     User/LCD
+    User/Fre
 )
 
 add_definitions(${defines})
