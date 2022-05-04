@@ -58,8 +58,20 @@ const osThreadAttr_t defaultTask_attributes = {
 osThreadId_t LCDHandle;
 const osThreadAttr_t LCD_attributes = {
   .name = "LCD",
-  .stack_size = 512 * 4,
+  .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityNormal,
+};
+/* Definitions for frequencyCnt */
+osThreadId_t frequencyCntHandle;
+const osThreadAttr_t frequencyCnt_attributes = {
+  .name = "frequencyCnt",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityHigh,
+};
+/* Definitions for frequenceQueue */
+osMessageQueueId_t frequenceQueueHandle;
+const osMessageQueueAttr_t frequenceQueue_attributes = {
+  .name = "frequenceQueue"
 };
 
 /* Private function prototypes -----------------------------------------------*/
@@ -68,7 +80,8 @@ const osThreadAttr_t LCD_attributes = {
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void *argument);
-void lcdDisplay(void *argument);
+extern void lcdDisplay(void *argument);
+extern void freCnt(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -94,6 +107,10 @@ void MX_FREERTOS_Init(void) {
   /* start timers, add new ones, ... */
   /* USER CODE END RTOS_TIMERS */
 
+  /* Create the queue(s) */
+  /* creation of frequenceQueue */
+  frequenceQueueHandle = osMessageQueueNew (1, sizeof(double), &frequenceQueue_attributes);
+
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
   /* USER CODE END RTOS_QUEUES */
@@ -104,6 +121,9 @@ void MX_FREERTOS_Init(void) {
 
   /* creation of LCD */
   LCDHandle = osThreadNew(lcdDisplay, NULL, &LCD_attributes);
+
+  /* creation of frequencyCnt */
+  frequencyCntHandle = osThreadNew(freCnt, NULL, &frequencyCnt_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -135,24 +155,6 @@ void StartDefaultTask(void *argument)
     osDelay(950);
   }
   /* USER CODE END StartDefaultTask */
-}
-
-/* USER CODE BEGIN Header_lcdDisplay */
-/**
-* @brief Function implementing the LCD thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_lcdDisplay */
-__weak void lcdDisplay(void *argument)
-{
-  /* USER CODE BEGIN lcdDisplay */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END lcdDisplay */
 }
 
 /* Private application code --------------------------------------------------*/

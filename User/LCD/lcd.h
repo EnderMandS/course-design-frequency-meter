@@ -85,7 +85,7 @@ typedef struct
 #define SSD_VT 	(SSD_VER_RESOLUTION+SSD_VER_BACK_PORCH+SSD_VER_FRONT_PORCH)
 #define SSD_VPS (SSD_VER_BACK_PORCH)
 
-void lcdDisplay(void *argument);
+void freDisplay(void);
 
 #endif //FRECNT_CLION_LCD_H
 

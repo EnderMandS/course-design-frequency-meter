@@ -8,6 +8,11 @@
 #include "font.h"
 #include "string.h"
 #include "fre.h"
+#include "stdio.h"
+#include "math.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
 
 _lcd_dev lcddev;
 uint32_t POINT_COLOR=0xFFFFFFFF;
@@ -1723,20 +1728,43 @@ void LCD_ShowString(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uin
 
 void lcdDisplay(void *argument){
   LCD_Init();
+  char string[]="Frequency";
+  LCD_ShowString(0,0,strlen(string)*16,24,24,(uint8_t*)string);
+  vTaskDelete(NULL);
   for(;;){
-    char string[]="Frequency meter";
-    LCD_ShowString(0,0,strlen(string)*16,24,24,(uint8_t*)string);
-    freDouble2String(&fre);
-    LCD_ShowString(0,50,strlen((const char*)fre.freArr)*16,24,24,fre.freArr);
-    LCD_ShowString(0,80,strlen((const char*)fre.freArrThousand)*16,24,24,fre.freArrThousand);
-    LCD_ShowString(0,110,strlen((const char*)fre.freArrMillion)*16,24,24,fre.freArrMillion);
-    if(fre.frequency>1e6){
-      LCD_ShowString(0,200,strlen((const char*)fre.freArrMillion)*16,24,24,fre.freArrMillion);
-    }else if(fre.frequency>1e3){
-      LCD_ShowString(0,200,strlen((const char*)fre.freArrThousand)*16,24,24,fre.freArrThousand);
-    } else{
-      LCD_ShowString(0,200,strlen((const char*)fre.freArr)*16,24,24,fre.freArr);
-    }
-    osDelay(1000);
+
+  }
+}
+
+typedef struct {
+  uint8_t freArr[21];
+  uint8_t freArrThousand[21];
+  uint8_t freArrMillion[21];
+}FreLCDArray;
+void freDouble2String(double fre_t, FreLCDArray* freLcdArray_t){
+  double zhengshu;
+  double xiaoshu;
+
+  xiaoshu= modf(fre_t,&zhengshu);
+  sprintf((char*)freLcdArray_t->freArr,"%10d.%05d  Hz",(int)zhengshu,(int)(xiaoshu*100000)%100000);
+
+  xiaoshu = modf(fre_t/1e3,&zhengshu);
+  sprintf((char*)freLcdArray_t->freArrThousand,"%10d.%05d kHz",(int)zhengshu,(int)(xiaoshu*100000)%100000);
+
+  xiaoshu = modf(fre_t/1e6,&zhengshu);
+  sprintf((char*)freLcdArray_t->freArrMillion,"%10d.%05d MHz",(int)zhengshu,(int)(xiaoshu*100000)%100000);
+}
+void freDisplay(void){
+  FreLCDArray freLcdArray;
+  freDouble2String(frequency, &freLcdArray);
+  LCD_ShowString(0,50,strlen((const char*)freLcdArray.freArr)*16,24,24,freLcdArray.freArr);
+//  LCD_ShowString(0,80,strlen((const char*)freLcdArray.freArrThousand)*16,24,24,freLcdArray.freArrThousand);
+//  LCD_ShowString(0,110,strlen((const char*)freLcdArray.freArrMillion)*16,24,24,freLcdArray.freArrMillion);
+  if(frequency>1e6){
+    LCD_ShowString(0,80,strlen((const char*)freLcdArray.freArrMillion)*16,24,24,freLcdArray.freArrMillion);
+  }else if(frequency>1e3){
+    LCD_ShowString(0,80,strlen((const char*)freLcdArray.freArrThousand)*16,24,24,freLcdArray.freArrThousand);
+  } else{
+    LCD_ShowString(0,80,strlen((const char*)freLcdArray.freArr)*16,24,24,freLcdArray.freArr);
   }
 }

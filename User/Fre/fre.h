@@ -7,15 +7,13 @@
 
 #include "stm32f4xx.h"
 
-typedef struct {
-  double frequency;
-  uint8_t freArr[21];
-  uint8_t freArrThousand[21];
-  uint8_t freArrMillion[21];
-}Fre;
+enum {
+  PREPARE,
+  COUNTING,
+  ENDING
+};
 
-extern Fre fre;
-
-void freDouble2String(Fre* fre_t);
+extern double frequency;
+extern uint32_t freTimCnt;
 
 #endif //FRECNT_CLION_FRE_H
