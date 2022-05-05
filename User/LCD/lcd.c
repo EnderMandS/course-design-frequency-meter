@@ -1730,10 +1730,9 @@ void lcdDisplay(void *argument){
   LCD_Init();
   char string[]="Frequency";
   LCD_ShowString(0,0,strlen(string)*16,24,24,(uint8_t*)string);
+  strcpy(string,"Cycle");
+  LCD_ShowString(0,110,strlen(string)*16,24,24,(uint8_t*)string);
   vTaskDelete(NULL);
-  for(;;){
-
-  }
 }
 
 typedef struct {
@@ -1758,13 +1757,38 @@ void freDisplay(void){
   FreLCDArray freLcdArray;
   freDouble2String(frequency, &freLcdArray);
   LCD_ShowString(0,50,strlen((const char*)freLcdArray.freArr)*16,24,24,freLcdArray.freArr);
-//  LCD_ShowString(0,80,strlen((const char*)freLcdArray.freArrThousand)*16,24,24,freLcdArray.freArrThousand);
-//  LCD_ShowString(0,110,strlen((const char*)freLcdArray.freArrMillion)*16,24,24,freLcdArray.freArrMillion);
   if(frequency>1e6){
     LCD_ShowString(0,80,strlen((const char*)freLcdArray.freArrMillion)*16,24,24,freLcdArray.freArrMillion);
   }else if(frequency>1e3){
     LCD_ShowString(0,80,strlen((const char*)freLcdArray.freArrThousand)*16,24,24,freLcdArray.freArrThousand);
   } else{
     LCD_ShowString(0,80,strlen((const char*)freLcdArray.freArr)*16,24,24,freLcdArray.freArr);
+  }
+}
+
+void cycleDouble2String(double cycle_t, FreLCDArray* cycleLcdArray_t){
+  double zhengshu;
+  double xiaoshu;
+  cycle_t *= 1000;
+
+  xiaoshu= modf(cycle_t,&zhengshu);
+  sprintf((char*)cycleLcdArray_t->freArr,"%10d.%05d  ms",(int)zhengshu,(int)(xiaoshu*100000)%100000);
+
+  xiaoshu = modf(cycle_t*1e3,&zhengshu);
+  sprintf((char*)cycleLcdArray_t->freArrThousand,"%10d.%05d  us",(int)zhengshu,(int)(xiaoshu*100000)%100000);
+
+  xiaoshu = modf(cycle_t*1e6,&zhengshu);
+  sprintf((char*)cycleLcdArray_t->freArrMillion,"%10d.%05d  ns",(int)zhengshu,(int)(xiaoshu*100000)%100000);
+}
+void cycleDisplay(void){
+  FreLCDArray cycleLcdArray;
+  cycleDouble2String(cycle, &cycleLcdArray);
+  LCD_ShowString(0,150,strlen((const char*)cycleLcdArray.freArrMillion)*16,24,24,cycleLcdArray.freArrMillion);
+  if(cycle<1e-6){
+    LCD_ShowString(0,180,strlen((const char*)cycleLcdArray.freArrMillion)*16,24,24,cycleLcdArray.freArrMillion);
+  }else if(cycle<1e-3){
+    LCD_ShowString(0,180,strlen((const char*)cycleLcdArray.freArrThousand)*16,24,24,cycleLcdArray.freArrThousand);
+  } else{
+    LCD_ShowString(0,180,strlen((const char*)cycleLcdArray.freArr)*16,24,24,cycleLcdArray.freArr);
   }
 }

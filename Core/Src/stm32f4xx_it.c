@@ -171,6 +171,52 @@ void DebugMon_Handler(void)
 /******************************************************************************/
 
 /**
+  * @brief This function handles EXTI line4 interrupt.
+  */
+void EXTI4_IRQHandler(void)
+{
+  /* USER CODE BEGIN EXTI4_IRQn 0 */
+
+  /* USER CODE END EXTI4_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_4);
+  /* USER CODE BEGIN EXTI4_IRQn 1 */
+  switch (countState) {
+    case PREPARE:{
+      HAL_TIM_Base_Start(&htim1);
+      countState=COUNTING;
+      break;
+    }
+    case COUNTING:{
+      lowFre_L = htim1.Instance->CNT;
+      lowFre_H = htim8.Instance->CNT;
+      HAL_TIM_Base_Stop(&htim1);
+      HAL_TIM_Base_Stop(&htim8);
+      HAL_NVIC_DisableIRQ(GPIO_PIN_4);
+      countState=ENDING;
+      break;
+    }
+    default:{
+      break;
+    }
+  }
+  /* USER CODE END EXTI4_IRQn 1 */
+}
+
+/**
+  * @brief This function handles EXTI line[9:5] interrupts.
+  */
+void EXTI9_5_IRQHandler(void)
+{
+  /* USER CODE BEGIN EXTI9_5_IRQn 0 */
+
+  /* USER CODE END EXTI9_5_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_6);
+  /* USER CODE BEGIN EXTI9_5_IRQn 1 */
+
+  /* USER CODE END EXTI9_5_IRQn 1 */
+}
+
+/**
   * @brief This function handles TIM4 global interrupt.
   */
 void TIM4_IRQHandler(void)

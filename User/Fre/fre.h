@@ -10,10 +10,11 @@
 enum {
   PREPARE,
   COUNTING,
-  ENDING
+  ENDING,
 };
 
 extern double frequency;
+extern double cycle;
 extern uint32_t freTimCnt;
 
 #endif //FRECNT_CLION_FRE_H

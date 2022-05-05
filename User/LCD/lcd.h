@@ -86,6 +86,7 @@ typedef struct
 #define SSD_VPS (SSD_VER_BACK_PORCH)
 
 void freDisplay(void);
+void cycleDisplay(void);
 
 #endif //FRECNT_CLION_LCD_H
 
