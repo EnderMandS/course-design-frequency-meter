@@ -28,6 +28,7 @@
 #include "cmsis_os2.h"
 #include "stdbool.h"
 #include "tim.h"
+#include "mode.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -69,7 +70,6 @@ extern TIM_HandleTypeDef htim14;
 
 /* USER CODE BEGIN EV */
 extern osThreadId_t frequencyCntHandle;
-extern uint8_t countState;
 /* USER CODE END EV */
 
 /******************************************************************************/
@@ -178,7 +178,7 @@ void EXTI4_IRQHandler(void)
   /* USER CODE BEGIN EXTI4_IRQn 0 */
 
   /* USER CODE END EXTI4_IRQn 0 */
-  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_4);
+  HAL_GPIO_EXTI_IRQHandler(MODE_KEY_Pin);
   /* USER CODE BEGIN EXTI4_IRQn 1 */
   switch (countState) {
     case PREPARE:{
@@ -187,12 +187,12 @@ void EXTI4_IRQHandler(void)
       break;
     }
     case COUNTING:{
-      lowFre_L = htim1.Instance->CNT;
-      lowFre_H = htim8.Instance->CNT;
-      HAL_TIM_Base_Stop(&htim1);
-      HAL_TIM_Base_Stop(&htim8);
-      HAL_NVIC_DisableIRQ(GPIO_PIN_4);
-      countState=ENDING;
+        lowFre_L = htim1.Instance->CNT;
+        lowFre_H = htim8.Instance->CNT;
+        HAL_TIM_Base_Stop(&htim1);
+        HAL_TIM_Base_Stop(&htim8);
+        HAL_NVIC_DisableIRQ(GPIO_PIN_4);
+        countState = ENDING;
       break;
     }
     default:{
@@ -212,7 +212,15 @@ void EXTI9_5_IRQHandler(void)
   /* USER CODE END EXTI9_5_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_6);
   /* USER CODE BEGIN EXTI9_5_IRQn 1 */
-
+  if (countState==COUNTING){
+    lowFre_L = htim1.Instance->CNT;
+    lowFre_H = htim8.Instance->CNT;
+    HAL_TIM_Base_Stop(&htim1);
+    HAL_TIM_Base_Stop(&htim8);
+    HAL_NVIC_DisableIRQ(EXTI4_IRQn);
+    HAL_NVIC_DisableIRQ(EXTI9_5_IRQn);
+    countState=ENDING;
+  }
   /* USER CODE END EXTI9_5_IRQn 1 */
 }
 

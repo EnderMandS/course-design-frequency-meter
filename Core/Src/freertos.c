@@ -26,6 +26,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "lcd.h"
+#include "tim.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -58,8 +59,8 @@ const osThreadAttr_t defaultTask_attributes = {
 osThreadId_t LCDHandle;
 const osThreadAttr_t LCD_attributes = {
   .name = "LCD",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
+  .stack_size = 256 * 4,
+  .priority = (osPriority_t) osPriorityRealtime,
 };
 /* Definitions for frequencyCnt */
 osThreadId_t frequencyCntHandle;
@@ -68,10 +69,12 @@ const osThreadAttr_t frequencyCnt_attributes = {
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityHigh,
 };
-/* Definitions for frequenceQueue */
-osMessageQueueId_t frequenceQueueHandle;
-const osMessageQueueAttr_t frequenceQueue_attributes = {
-  .name = "frequenceQueue"
+/* Definitions for modeKeyTask */
+osThreadId_t modeKeyTaskHandle;
+const osThreadAttr_t modeKeyTask_attributes = {
+  .name = "modeKeyTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
 };
 
 /* Private function prototypes -----------------------------------------------*/
@@ -82,6 +85,7 @@ const osMessageQueueAttr_t frequenceQueue_attributes = {
 void StartDefaultTask(void *argument);
 extern void lcdDisplay(void *argument);
 extern void freCnt(void *argument);
+extern void modeKeyCheck(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -107,10 +111,6 @@ void MX_FREERTOS_Init(void) {
   /* start timers, add new ones, ... */
   /* USER CODE END RTOS_TIMERS */
 
-  /* Create the queue(s) */
-  /* creation of frequenceQueue */
-  frequenceQueueHandle = osMessageQueueNew (1, sizeof(double), &frequenceQueue_attributes);
-
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
   /* USER CODE END RTOS_QUEUES */
@@ -124,6 +124,9 @@ void MX_FREERTOS_Init(void) {
 
   /* creation of frequencyCnt */
   frequencyCntHandle = osThreadNew(freCnt, NULL, &frequencyCnt_attributes);
+
+  /* creation of modeKeyTask */
+  modeKeyTaskHandle = osThreadNew(modeKeyCheck, NULL, &modeKeyTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */

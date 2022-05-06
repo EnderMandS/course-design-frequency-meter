@@ -87,6 +87,9 @@ typedef struct
 
 void freDisplay(void);
 void cycleDisplay(void);
+void intervalTimeDisplay(void);
+void UIDisplay(void);
+void LCD_Clear(uint32_t color);
 
 #endif //FRECNT_CLION_LCD_H
 
