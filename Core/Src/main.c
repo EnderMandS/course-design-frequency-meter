@@ -25,7 +25,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "mode.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -100,8 +100,10 @@ int main(void)
   HAL_NVIC_DisableIRQ(EXTI4_IRQn);
   HAL_NVIC_DisableIRQ(EXTI9_5_IRQn);
   HAL_TIM_PWM_Start(&htim12,TIM_CHANNEL_1);
-  uint32_t i=0xffffff;
-  while(i--);
+  if(mode == INTERVAL_MODE) {
+    uint32_t i = 0xffffff;
+    while (i--);
+  }
   HAL_TIM_PWM_Start(&htim10,TIM_CHANNEL_1);
   /* USER CODE END 2 */
 

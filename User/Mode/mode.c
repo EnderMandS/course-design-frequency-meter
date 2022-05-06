@@ -5,7 +5,7 @@
 #include "mode.h"
 #include "cmsis_os2.h"
 
-uint8_t mode = INTERVAL_MODE;
+uint8_t mode = FREQUENCY_MODE;
 
 #define DEBOUNCE_CNT 50
 void modeKeyCheck(void *argument){
