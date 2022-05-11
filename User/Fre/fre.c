@@ -10,6 +10,7 @@
 #include "lcd.h"
 #include "mode.h"
 
+#define INTERVAL_SAMPLE_TIME 10
 double frequency=123456789.123456;
 double cycle=0;
 uint32_t freTimCnt=0;
@@ -82,24 +83,30 @@ void freCnt(void *argument){
       freDisplay();
       cycleDisplay();
     }else{
-      countState = PREPARE;
-      htim1.Instance->CNT = 0;
-      htim8.Instance->CNT = 0;
-      HAL_TIM_Base_Start(&htim8);
-      __HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_4);
-      __HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_6);
-      HAL_NVIC_EnableIRQ(EXTI4_IRQn);
-      HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
-      HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, GPIO_PIN_SET);
-      while (countState != ENDING) {
-        osDelay(1);
+      double intervalTimeArray[INTERVAL_SAMPLE_TIME]={0};
+      double sum = 0;
+      for(uint8_t i=0; i<INTERVAL_SAMPLE_TIME; ++i) {
+        countState = PREPARE;
+        htim1.Instance->CNT = 0;
+        htim8.Instance->CNT = 0;
+        HAL_TIM_Base_Start(&htim8);
+        __HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_4);
+        __HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_6);
+        HAL_NVIC_EnableIRQ(EXTI4_IRQn);
+        HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
+        HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, GPIO_PIN_SET);
+        while (countState != ENDING) {
+          osDelay(1);
+        }
+        HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, GPIO_PIN_RESET);
+        if (lowFre_H != 0 || lowFre_L != 0) {
+          intervalTimeArray[i] = ((lowFre_H << 16) + lowFre_L) / 168e6;
+        } else {
+          intervalTimeArray[i] = 0;
+        }
+        sum += intervalTimeArray[i];
       }
-      HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, GPIO_PIN_RESET);
-      if (lowFre_H != 0 || lowFre_L != 0) {
-        intervalTime = ((lowFre_H << 16) + lowFre_L)/168e6;
-      }else{
-        intervalTime = 0;
-      }
+      intervalTime = sum/INTERVAL_SAMPLE_TIME;
       intervalTimeDisplay();
     }
   }
