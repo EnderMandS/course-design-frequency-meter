@@ -80,8 +80,10 @@ void freCnt(void *argument){
           cycle = 0;
         }
       }
-      freDisplay();
-      cycleDisplay();
+      if(!pause) {
+        freDisplay();
+        cycleDisplay();
+      }
     }else{
       double intervalTimeArray[INTERVAL_SAMPLE_TIME]={0};
       double sum = 0;
@@ -107,7 +109,9 @@ void freCnt(void *argument){
         sum += intervalTimeArray[i];
       }
       intervalTime = sum/INTERVAL_SAMPLE_TIME;
-      intervalTimeDisplay();
+      if(!pause) {
+        intervalTimeDisplay();
+      }
     }
   }
 }

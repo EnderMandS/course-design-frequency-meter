@@ -6,6 +6,7 @@
 #define FRECNT_CLION_MODE_H
 
 #include "main.h"
+#include <stdbool.h>
 
 enum {
   FREQUENCY_MODE,
@@ -13,5 +14,6 @@ enum {
 };
 
 extern uint8_t mode;
+extern bool pause;
 
 #endif //FRECNT_CLION_MODE_H

@@ -59,11 +59,11 @@ void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LCD_Light_GPIO_Port, LCD_Light_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin : PtPin */
-  GPIO_InitStruct.Pin = MODE_KEY_Pin;
+  /*Configure GPIO pins : PEPin PEPin */
+  GPIO_InitStruct.Pin = DISP_PAUSE_Pin|MODE_KEY_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(MODE_KEY_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PFPin PFPin */
   GPIO_InitStruct.Pin = LED_RED_Pin|LED_GREEN_Pin;

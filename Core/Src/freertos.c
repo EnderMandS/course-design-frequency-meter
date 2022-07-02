@@ -76,6 +76,13 @@ const osThreadAttr_t modeKeyTask_attributes = {
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
+/* Definitions for pauseKeyTask */
+osThreadId_t pauseKeyTaskHandle;
+const osThreadAttr_t pauseKeyTask_attributes = {
+  .name = "pauseKeyTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityBelowNormal,
+};
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -86,6 +93,7 @@ void StartDefaultTask(void *argument);
 extern void lcdDisplay(void *argument);
 extern void freCnt(void *argument);
 extern void modeKeyCheck(void *argument);
+extern void pauseKeyCheck(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -127,6 +135,9 @@ void MX_FREERTOS_Init(void) {
 
   /* creation of modeKeyTask */
   modeKeyTaskHandle = osThreadNew(modeKeyCheck, NULL, &modeKeyTask_attributes);
+
+  /* creation of pauseKeyTask */
+  pauseKeyTaskHandle = osThreadNew(pauseKeyCheck, NULL, &pauseKeyTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
