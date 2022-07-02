@@ -52,6 +52,7 @@ include_directories(${includes}
     User/LCD
     User/Fre
     User/Mode
+    User/Average
 )
 
 add_definitions(${defines})

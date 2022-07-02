@@ -9,6 +9,7 @@
 #include "task.h"
 #include "lcd.h"
 #include "mode.h"
+#include "average.h"
 
 #define INTERVAL_SAMPLE_TIME 10
 double frequency=123456789.123456;
@@ -80,6 +81,10 @@ void freCnt(void *argument){
           cycle = 0;
         }
       }
+#if USE_AVERAGE==1
+      averageCalculate(&averFre,frequency);
+      averageCalculate(&averCycle,cycle);
+#endif
       if(!pause) {
         freDisplay();
         cycleDisplay();
@@ -109,6 +114,9 @@ void freCnt(void *argument){
         sum += intervalTimeArray[i];
       }
       intervalTime = sum/INTERVAL_SAMPLE_TIME;
+#if USE_AVERAGE==1
+      averageCalculate(&averInterval,intervalTime);
+#endif
       if(!pause) {
         intervalTimeDisplay();
       }

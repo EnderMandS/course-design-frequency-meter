@@ -53,6 +53,7 @@ include_directories(Core/Inc Drivers/STM32F4xx_HAL_Driver/Inc Drivers/STM32F4xx_
     User/LCD
     User/Fre
     User/Mode
+    User/Average
 )
 
 add_definitions(-DUSE_HAL_DRIVER -DSTM32F407xx)
