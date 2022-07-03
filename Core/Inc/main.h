@@ -59,12 +59,16 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define DISP_PAUSE_Pin GPIO_PIN_2
 #define DISP_PAUSE_GPIO_Port GPIOE
+#define KEY1_Pin GPIO_PIN_3
+#define KEY1_GPIO_Port GPIOE
 #define MODE_KEY_Pin GPIO_PIN_4
 #define MODE_KEY_GPIO_Port GPIOE
 #define LED_RED_Pin GPIO_PIN_9
 #define LED_RED_GPIO_Port GPIOF
 #define LED_GREEN_Pin GPIO_PIN_10
 #define LED_GREEN_GPIO_Port GPIOF
+#define KEY_UP_Pin GPIO_PIN_0
+#define KEY_UP_GPIO_Port GPIOA
 #define LCD_Light_Pin GPIO_PIN_15
 #define LCD_Light_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */

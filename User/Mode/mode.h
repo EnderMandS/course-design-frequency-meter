@@ -15,5 +15,6 @@ enum {
 
 extern uint8_t mode;
 extern bool pause;
+extern uint8_t displayControl;
 
 #endif //FRECNT_CLION_MODE_H
